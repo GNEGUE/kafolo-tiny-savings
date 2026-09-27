@@ -1,17 +1,854 @@
-KAFOLO
-│
-├── index.html
-│
-├── css/
-│   └── style.css
-│
-├── js/
-│   └── app.js
-│
-├── api/
-│   └── paygate/
-│       ├── create-payment.js
-│       ├── callback.js
-│       └── withdraw.js
-│
-└── database
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>KAFOLO — Tirelire numérique</title>
+
+    <meta name="description"
+          content="KAFOLO - Tirelire numérique et épargne progressive au Togo.">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7f5;
+            color: #17251d;
+        }
+
+        .app {
+            max-width: 480px;
+            margin: auto;
+            min-height: 100vh;
+            background: #ffffff;
+            padding-bottom: 80px;
+        }
+
+        /* HEADER */
+        header {
+            background: #087443;
+            color: white;
+            padding: 25px 20px;
+            border-radius: 0 0 25px 25px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            margin-top: 6px;
+            opacity: .9;
+            font-size: 14px;
+        }
+
+        /* SOLDE */
+        .balance-card {
+            margin: 20px;
+            padding: 25px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #087443, #0da45e);
+            color: white;
+            box-shadow: 0 8px 25px rgba(0,0,0,.12);
+        }
+
+        .balance-title {
+            font-size: 13px;
+            opacity: .85;
+        }
+
+        .balance {
+            font-size: 34px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .balance-info {
+            font-size: 13px;
+            opacity: .9;
+        }
+
+        /* BUTTONS */
+        .buttons {
+            display: flex;
+            gap: 10px;
+            padding: 0 20px;
+        }
+
+        button {
+            border: none;
+            cursor: pointer;
+            border-radius: 14px;
+            padding: 14px;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .primary {
+            background: #087443;
+            color: white;
+            flex: 1;
+        }
+
+        .secondary {
+            background: #e8f3ed;
+            color: #087443;
+            flex: 1;
+        }
+
+        /* SECTION */
+        section {
+            padding: 25px 20px 0;
+        }
+
+        .section-title {
+            font-size: 19px;
+            margin-bottom: 15px;
+        }
+
+        /* OBJECTIF */
+        .goal-card {
+            background: #f5f8f6;
+            padding: 18px;
+            border-radius: 18px;
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .progress {
+            width: 100%;
+            height: 12px;
+            background: #dce7e1;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            width: 62%;
+            height: 100%;
+            background: #087443;
+            border-radius: 20px;
+        }
+
+        .goal-details {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 13px;
+            color: #637168;
+        }
+
+        /* OPERATIONS */
+        .operation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #edf0ee;
+        }
+
+        .operation-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .icon {
+            width: 40px;
+            height: 40px;
+            background: #e8f3ed;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 19px;
+        }
+
+        .operation-name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .operation-date {
+            font-size: 12px;
+            color: #8a968f;
+            margin-top: 3px;
+        }
+
+        .amount {
+            font-weight: bold;
+            color: #087443;
+        }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.55);
+            z-index: 100;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        .modal-content {
+            width: 100%;
+            max-width: 480px;
+            background: white;
+            padding: 25px;
+            border-radius: 25px 25px 0 0;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            margin: 12px 0 7px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #d8e0db;
+            border-radius: 12px;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .payment-method {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .payment-method button {
+            flex: 1;
+            border: 1px solid #d8e0db;
+            background: white;
+        }
+
+        .payment-method button.active {
+            border: 2px solid #087443;
+            background: #e8f3ed;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .close {
+            background: #eee;
+            flex: 1;
+        }
+
+        /* NAVIGATION */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            height: 65px;
+            background: white;
+            border-top: 1px solid #e7ebe8;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 50;
+        }
+
+        .nav-item {
+            text-align: center;
+            font-size: 11px;
+            color: #829088;
+        }
+
+        .nav-item.active {
+            color: #087443;
+            font-weight: bold;
+        }
+
+        .nav-icon {
+            font-size: 21px;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        /* INFO */
+        .info {
+            margin: 20px;
+            padding: 15px;
+            background: #fff8e5;
+            border-radius: 15px;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #69551c;
+        }
+
+        /* RESPONSIVE */
+        @media (min-width: 600px) {
+            body {
+                padding: 20px 0;
+            }
+
+            .app {
+                border-radius: 25px;
+                overflow: hidden;
+                box-shadow: 0 10px 40px rgba(0,0,0,.1);
+            }
+
+            .bottom-nav {
+                bottom: 20px;
+                border-radius: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- HEADER -->
+    <header>
+        <div class="logo">KAFOLO</div>
+        <div class="subtitle">
+            Ma tirelire numérique • Mon épargne • Mon rythme
+        </div>
+    </header>
+
+
+    <!-- SOLDE -->
+    <div class="balance-card">
+
+        <div class="balance-title">
+            Épargne disponible
+        </div>
+
+        <div class="balance">
+            <span id="balance">125 000</span> F CFA
+        </div>
+
+        <div class="balance-info">
+            Épargne personnelle — aucun rendement
+        </div>
+
+    </div>
+
+
+    <!-- ACTIONS -->
+    <div class="buttons">
+
+        <button class="primary" onclick="openDeposit()">
+            + Déposer
+        </button>
+
+        <button class="secondary" onclick="openWithdraw()">
+            Retirer
+        </button>
+
+    </div>
+
+
+    <!-- OBJECTIF -->
+    <section>
+
+        <h2 class="section-title">
+            Mon objectif
+        </h2>
+
+        <div class="goal-card">
+
+            <div class="goal-header">
+                <strong>Objectif d'épargne</strong>
+                <strong>62%</strong>
+            </div>
+
+            <div class="progress">
+                <div class="progress-bar"></div>
+            </div>
+
+            <div class="goal-details">
+                <span>125 000 F</span>
+                <span>200 000 F</span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- DÉBLOCAGE -->
+    <section>
+
+        <h2 class="section-title">
+            Déblocage progressif
+        </h2>
+
+        <div class="goal-card">
+
+            <div class="goal-header">
+                <span>Montant déblocable aujourd'hui</span>
+                <strong>5 000 F</strong>
+            </div>
+
+            <div class="goal-details">
+                <span>Prochain déblocage</span>
+                <span>Demain</span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- HISTORIQUE -->
+    <section>
+
+        <h2 class="section-title">
+            Dernières opérations
+        </h2>
+
+        <div class="operation">
+
+            <div class="operation-left">
+
+                <div class="icon">↓</div>
+
+                <div>
+                    <div class="operation-name">
+                        Dépôt Flooz
+                    </div>
+
+                    <div class="operation-date">
+                        Aujourd'hui • 09:42
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="amount">
+                +20 000 F
+            </div>
+
+        </div>
+
+
+        <div class="operation">
+
+            <div class="operation-left">
+
+                <div class="icon">↓</div>
+
+                <div>
+                    <div class="operation-name">
+                        Dépôt Mixx by Yas
+                    </div>
+
+                    <div class="operation-date">
+                        Hier • 17:20
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="amount">
+                +50 000 F
+            </div>
+
+        </div>
+
+
+        <div class="operation">
+
+            <div class="operation-left">
+
+                <div class="icon">↑</div>
+
+                <div>
+                    <div class="operation-name">
+                        Déblocage
+                    </div>
+
+                    <div class="operation-date">
+                        25 septembre • 10:00
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="amount">
+                -5 000 F
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- INFORMATION -->
+    <div class="info">
+
+        <strong>À propos de KAFOLO</strong><br><br>
+
+        KAFOLO est un service de garde et de discipline
+        d'épargne personnelle.
+
+        KAFOLO ne propose aucun investissement,
+        aucun rendement et aucun gain d'intérêt.
+
+        <br><br>
+
+        <strong>Frais de service : 2%</strong>
+
+    </div>
+
+
+    <!-- MODAL DÉPÔT -->
+    <div class="modal" id="depositModal">
+
+        <div class="modal-content">
+
+            <h2>Faire un dépôt</h2>
+
+            <label>Montant</label>
+
+            <input
+                type="number"
+                id="depositAmount"
+                placeholder="Ex : 10000"
+            >
+
+            <label>Mode de paiement</label>
+
+            <div class="payment-method">
+
+                <button
+                    id="floozBtn"
+                    onclick="selectPayment('Flooz')">
+                    Flooz
+                </button>
+
+                <button
+                    id="mixxBtn"
+                    onclick="selectPayment('Mixx')">
+                    Mixx by Yas
+                </button>
+
+            </div>
+
+            <div class="modal-actions">
+
+                <button
+                    class="close"
+                    onclick="closeModals()">
+                    Annuler
+                </button>
+
+                <button
+                    class="primary"
+                    onclick="makeDeposit()">
+                    Continuer
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- MODAL RETRAIT -->
+    <div class="modal" id="withdrawModal">
+
+        <div class="modal-content">
+
+            <h2>Déblocage</h2>
+
+            <p style="font-size:14px;color:#68756d;">
+                Montant disponible aujourd'hui :
+            </p>
+
+            <h2 style="color:#087443;margin-top:10px;">
+                5 000 F CFA
+            </h2>
+
+            <label>Montant à retirer</label>
+
+            <input
+                type="number"
+                id="withdrawAmount"
+                placeholder="Ex : 5000"
+            >
+
+            <label>Numéro Mobile Money</label>
+
+            <input
+                type="tel"
+                id="withdrawPhone"
+                placeholder="+228 XX XX XX XX"
+            >
+
+            <div class="modal-actions">
+
+                <button
+                    class="close"
+                    onclick="closeModals()">
+                    Annuler
+                </button>
+
+                <button
+                    class="primary"
+                    onclick="makeWithdraw()">
+                    Demander le retrait
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- NAVIGATION -->
+    <nav class="bottom-nav">
+
+        <div class="nav-item active">
+            <span class="nav-icon">⌂</span>
+            Accueil
+        </div>
+
+        <div class="nav-item">
+            <span class="nav-icon">🎯</span>
+            Objectif
+        </div>
+
+        <div class="nav-item">
+            <span class="nav-icon">↔</span>
+            Opérations
+        </div>
+
+        <div class="nav-item">
+            <span class="nav-icon">👤</span>
+            Profil
+        </div>
+
+    </nav>
+
+</div>
+
+
+<script>
+
+    let selectedPayment = "";
+
+    function openDeposit() {
+        document.getElementById("depositModal").style.display = "flex";
+    }
+
+    function openWithdraw() {
+        document.getElementById("withdrawModal").style.display = "flex";
+    }
+
+    function closeModals() {
+        document.getElementById("depositModal").style.display = "none";
+        document.getElementById("withdrawModal").style.display = "none";
+    }
+
+    function selectPayment(method) {
+
+        selectedPayment = method;
+
+        document.getElementById("floozBtn")
+            .classList.remove("active");
+
+        document.getElementById("mixxBtn")
+            .classList.remove("active");
+
+        if (method === "Flooz") {
+            document.getElementById("floozBtn")
+                .classList.add("active");
+        }
+
+        if (method === "Mixx") {
+            document.getElementById("mixxBtn")
+                .classList.add("active");
+        }
+    }
+
+
+    async function makeDeposit() {
+
+        const amount =
+            Number(document.getElementById("depositAmount").value);
+
+        if (!amount || amount <= 0) {
+            alert("Veuillez saisir un montant valide.");
+            return;
+        }
+
+        if (!selectedPayment) {
+            alert("Veuillez choisir Flooz ou Mixx by Yas.");
+            return;
+        }
+
+        /*
+         * IMPORTANT :
+         *
+         * Cette partie doit être reliée à TON BACKEND.
+         *
+         * Exemple :
+         *
+         * POST /api/paygate/create-payment
+         *
+         * Le serveur devra ensuite communiquer
+         * avec le prestataire de paiement.
+         */
+
+        const response = await fetch(
+            "/api/paygate/create-payment",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    amount: amount,
+                    payment_method: selectedPayment
+                })
+            }
+        );
+
+        if (!response.ok) {
+            alert(
+                "Impossible de démarrer le paiement."
+            );
+            return;
+        }
+
+        const data = await response.json();
+
+        /*
+         * Exemple de réponse :
+         *
+         * {
+         *   payment_url: "..."
+         * }
+         */
+
+        if (data.payment_url) {
+            window.location.href = data.payment_url;
+        }
+    }
+
+
+    async function makeWithdraw() {
+
+        const amount =
+            Number(document.getElementById("withdrawAmount").value);
+
+        const phone =
+            document.getElementById("withdrawPhone").value;
+
+        if (!amount || amount <= 0) {
+            alert("Veuillez saisir un montant valide.");
+            return;
+        }
+
+        if (!phone) {
+            alert("Veuillez saisir votre numéro Mobile Money.");
+            return;
+        }
+
+        /*
+         * Le retrait doit être traité par le backend.
+         *
+         * Exemple :
+         *
+         * POST /api/paygate/withdraw
+         */
+
+        const response = await fetch(
+            "/api/paygate/withdraw",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    amount: amount,
+                    phone: phone
+                })
+            }
+        );
+
+        if (!response.ok) {
+            alert("La demande de retrait a échoué.");
+            return;
+        }
+
+        alert(
+            "Votre demande de retrait a été enregistrée."
+        );
+
+        closeModals();
+    }
+
+
+    /*
+     * CALLBACK PAYGATE
+     *
+     * URL À CONFIGURER CHEZ LE PRESTATAIRE :
+     *
+     * https://kafolo.vercel.app/api/paygate/callback
+     *
+     * URL temporaire si le backend n'est pas encore déployé :
+     *
+     * https://kafolo.vercel.app/callback
+     *
+     */
+
+
+    /*
+     * Exemple de calcul des frais KAFOLO
+     */
+
+    function calculateFees(amount) {
+
+        const fees = amount * 0.02;
+
+        const total = amount + fees;
+
+        return {
+            fees: fees,
+            total: total
+        };
+    }
+
+</script>
+
+</body>
+</html>
