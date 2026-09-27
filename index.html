@@ -1,86 +1,65 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>KAFOLO - Tiny Savings</title>
-<style>
-*{box-sizing:border-box;font-family:sans-serif}body{margin:0;background:#fef9f0;color:#222;padding:16px}
-h1{margin:0;font-size:28px}.card{background:white;border-radius:20px;padding:18px;box-shadow:0 4px 15px rgba(0,0,0,.07);margin:12px 0}
-.balance{font-size:36px;font-weight:900;color:#ff6b35}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.btn{border:none;border-radius:16px;padding:16px;font-weight:700;font-size:15px;cursor:pointer}
-.btn-orange{background:#ff6b35;color:white}.btn-light{background:#fff3e8;color:#ff6b35}
-.btn-dark{background:#222;color:white;width:100%;margin-top:10px;padding:18px;font-size:18px}
-.tirelire{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #eee}
-.tag{padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700}
-.mix{background:#e3f2ff;color:#1976d2}.baya{background:#fce4ec;color:#c2185b}.dep{background:#e8f5e9;color:#2e7d32}
-input{width:100%;padding:14px;border-radius:12px;border:2px solid #ffe0cc;font-size:16px;margin:8px 0}
-</style>
-</head>
-<body>
-<h1>🐖 KAFOLO</h1><p style="color:#888;margin-top:2px">Tiny Savings • Lomé</p>
+Crée une application web complète, mobile-first, professionnelle et inspirant 100% confiance, nommée **KAFOLO - Mon Épargne Bloquée**.
 
-<div class="card">
-<div style="color:#888;font-size:13px">TOTAL ÉPARGNÉ</div>
-<div class="balance" id="total">0 F</div>
-<div style="color:#888;font-size:13px" id="count">0 dépôts</div>
-</div>
+**1. VISION ET POSITIONNEMENT :**
+KAFOLO n'est PAS un site d'investissement. C'est une TIRELIRE NUMÉRIQUE ANTI-GASPILLAGE pour le Togo. Slogan : "Ton argent est en sécurité. On te le rend petit à petit pour que tu ne le gaspilles pas."
+Objectif : Aider les jeunes, zem, vendeuses, étudiants à Lomé à garder leur argent. L'utilisateur dépose son PROPRE argent (ex: 5000F) et on le lui reverse par tranche quotidienne (ex: 1000F/jour). Aucune promesse de gain. Juste de la discipline.
 
-<div class="grid">
-<button class="btn btn-orange" onclick="depot()">+ Dépôt</button>
-<button class="btn btn-light" onclick="retrait()">- Retrait</button>
-</div>
+**2. IDENTITÉ VISUELLE ET CONFIANCE (TRÈS IMPORTANT) :**
+- Couleurs : Vert principal #00B67A (comme Wave), Blanc #FFFFFF, Gris clair #F5F5F5, Noir #121212
+- Logo : Tirelire cochon avec cadenas qui s'ouvre légèrement.
+- Police : Inter ou Poppins, très lisible.
+- Design : Comme Wave / Flooz. Gros boutons arrondis, beaucoup d'espace blanc, ultra simple.
+- Éléments de confiance OBLIGATOIRES sur la page d'accueil :
+    - Badge "100% Sécurisé - Paiements Mixx by Yas & Flooz"
+    - Badge "Aucun frais caché"
+    - Section "Comment ça marche ? en 3 étapes" avec icônes
+    - Section "Pourquoi KAFOLO n'est PAS une arnaque" : Explique clairement : On ne multiplie pas ton argent. On garde TON argent et on te le rend. C'est TA tirelire.
+    - Témoignages fictifs mais réalistes (3 témoignages avec photo togolaise, ex: "Koffi, Zem à Adidogomé")
+    - FAQ : 6 questions (Et si je veux tout retirer ? Est-ce que mon argent est perdu ? Quels sont les frais ? etc.)
+    - Footer avec Contacts : WhatsApp, Email, Mentions Légales, CGU.
 
-<div class="card">
-<h3 style="margin:0 0 10px 0">🐷 Ma Tirelire</h3>
-<div id="liste"></div>
-<div class="grid" style="margin-top:14px">
-<button class="btn btn-light" onclick="addTirelire('Mix')">+ Mix</button>
-<button class="btn btn-light" onclick="addTirelire('Baya')">+ Baya</button>
-</div>
-</div>
+**3. TEXTE COMPLET DE LA PAGE D'ACCUEIL (à mettre tel quel) :**
+- HERO : Titre "Arrête de tout dépenser le même jour." Sous-titre "Dépose 5.000F aujourd'hui. KAFOLO te rend 1.000F chaque jour. Deviens enfin maître de ton argent." Bouton CTA vert "Créer ma Tirelire Gratuitement"
+- Section 3 étapes : 1. Tu déposes via Mixx/Flooz 2. Ton argent est bloqué en sécurité 3. Tu reçois un peu chaque jour à 6h du matin.
+- Section Problème/Solution : Problème : Tu touches de l'argent et le soir il ne reste rien. Solution : KAFOLO est le cadenas de ta tirelire.
+- Section Sécurité : Ton argent ne part nulle part. Frais transparents : 100F sur 5000F. Pénalité 10% seulement si tu casses ta tirelire avant la fin.
 
-<div class="card">
-<h3 style="margin:0 0 10px 0">📜 Historique</h3>
-<div id="hist" style="font-size:14px;color:#666">Pas encore de dépôt</div>
-</div>
+**4. FONCTIONNALITÉS TECHNIQUES OBLIGATOIRES :**
 
-<script>
-let data = JSON.parse(localStorage.getItem('kafolo')||'{"total":0,"items":[],"hist":[]}');
-function save(){localStorage.setItem('kafolo',JSON.stringify(data));render()}
-function render(){
- document.getElementById('total').textContent=data.total.toLocaleString()+' F';
- document.getElementById('count').textContent=data.hist.length+' dépôts';
- let h='';
- data.items.forEach((it,i)=>{
-  h+=`<div class="tirelire"><div><b>${it.nom}</b><br><small style="color:#888">${it.montant} F</small></div><span class="tag ${it.nom.toLowerCase()}">${it.nom}</span></div>`;
- });
- if(!data.items.length) h='<div style="color:#aaa">Clique + Mix ou + Baya pour créer</div>';
- document.getElementById('liste').innerHTML=h;
- let hh='';
- data.hist.slice().reverse().forEach(x=>{hh+=`<div style="padding:6px 0;border-bottom:1px solid #f5f5f5">• ${x}</div>`});
- if(hh) document.getElementById('hist').innerHTML=hh;
-}
-function depot(){
- let m=prompt('Montant du dépôt en F ? (ex: 500)');
- if(!m) return;
- m=parseInt(m); if(isNaN(m)) return;
- let nom=prompt('Pour quelle tirelire ? Tape Mix ou Baya','Mix')||'Mix';
- data.total+=m;
- let found=data.items.find(i=>i.nom.toLowerCase()==nom.toLowerCase());
- if(found) found.montant+=m; else data.items.push({nom:nom,montant:m});
- data.hist.push('+'+m+' F dans '+nom+' - '+new Date().toLocaleDateString());
- save();
-}
-function retrait(){
- let m=prompt('Montant à retirer ?'); if(!m) return; m=parseInt(m);
- if(m>data.total){alert('Pas assez !');return;}
- data.total-=m; data.hist.push('-'+m+' F retrait'); save();
-}
-function addTirelire(nom){
- let m=prompt('Montant de départ pour '+nom+' ?','0')||'0';
- data.items.push({nom:nom,montant:parseInt(m)||0}); save();
-}
-render();
-</script>
-</body>
-</html>
+A. Auth : Inscription par Numéro de téléphone Togolais (+228) + Nom + Mot de passe. OTP par SMS (simuler pour l'instant).
+
+B. Dashboard Utilisateur :
+- Carte 1 : Solde Bloqué Total (ex: 4000 F restants)
+- Carte 2 : Solde Disponible Aujourd'hui (ex: 1000 F) + Gros bouton "RETIRER MES 1000F SUR MIXX/FLOOZ MAINTENANT"
+- Barre de progression : Jour 2 sur 5
+- Calendrier visuel des 5 prochains déblocages (avec dates)
+- Historique complet : Dépôts / Retraits quotidiens / Statut
+- Bouton rouge "Casser ma tirelire (Pénalité 10%)" avec pop-up de confirmation qui explique la pénalité.
+
+C. Page Dépôt :
+- Choix Montant : 5.000F, 10.000F, 15.000F, 25.000F, 50.000F, Autre montant
+- Choix Rythme de déblocage : 500F/jour, 1000F/jour, 2000F/jour
+- Calcul automatique : "Si tu déposes 5000F à 1000F/jour, tu seras débloqué en 5 jours"
+- Paiement : Intégration **PayGate Global API** pour Mixx by Yas (ex T-Money) et Flooz. Utiliser CinetPay comme fallback. La page doit demander le numéro Mixx/Flooz pour payer.
+
+D. Logique Backend - CRON JOB (Essentiel) :
+- Créer une fonction Supabase Cron qui tourne tous les jours à 06:00 GMT.
+- Elle prend chaque épargne active, déplace X montant (selon le rythme choisi) de `solde_bloque` vers `solde_disponible`.
+- Envoie une notification (simuler un envoi WhatsApp : "Bonjour Koffi, tes 1000F du jour sont disponibles sur KAFOLO !").
+
+E. Page Admin / Super Admin :
+- Voir tous les utilisateurs, tous les dépôts, tous les retraits en attente.
+- Bouton pour valider les retraits vers Mixx/Flooz.
+- Statistiques : Total bloqué sur la plateforme, Total retiré, Nombre d'utilisateurs.
+- Génération automatique d'un **PDF Présentation Investisseur** avec les stats du jour.
+
+F. Page Légale :
+- CGU, Mentions Légales, Politique de confidentialité. Texte simple qui dit que KAFOLO est un service de garde d'épargne, pas une banque, pas un investissement à rendement.
+
+**5. STACK TECHNIQUE :**
+Next.js 14, Tailwind CSS, Supabase (Auth + Database + Cron), PayGate Global SDK. Code propre, commenté, prêt à déployer sur Vercel.
+
+**6. PDF INVESTISSEUR (Créer une page /investisseurs qui génère le PDF) :**
+Le PDF doit contenir : Page de garde KAFOLO, Problème au Togo, Solution KAFOLO, Comment ça marche, Business Model (Frais 2% + Pénalité 10% + Premium 500F/mois), Marché cible (2M de jeunes avec Mobile Money), Pourquoi c'est différent des arnaques (pas de promesse de gain), Roadmap, Contact.
+
+Le résultat final doit être une application qui donne 100% CONFIANCE dès la première seconde. Design premium, pas amateur.
