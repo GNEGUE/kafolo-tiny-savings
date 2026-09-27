@@ -1,1 +1,86 @@
-<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>KAFOLO</title><style>body{font-family:system-ui;background:#FFF7ED;margin:0;padding:20px} .card{background:white;border-radius:24px;padding:20px;max-width:400px;margin:auto;box-shadow:0 10px 30px #0001} .btn{width:100%;background:#f97316;color:white;border:none;padding:16px;border-radius:16px;font-size:18px;font-weight:bold;margin-top:15px} .tirelire{display:flex;gap:10px;margin:20px 0} .box{flex:1;border-radius:16px;padding:15px;text-align:center} .bloque{background:#FFF7ED;border:2px solid #fed7aa} .libre{background:#f0fdf4;border:2px solid #bbf7d0} input{width:100%;padding:14px;border-radius:12px;border:2px solid #e5e7eb;margin-top:10px;box-sizing:border-box}</style></head><body><div class="card"><h1>🐖 KAFOLO Tiny</h1><div class="tirelire"><div class="box bloque"><b id="b">0 F</b><br><small>🔒 90% Bloqué</small></div><div class="box libre"><b id="l">0 F</b><br><small>💸 10% Libre</small></div></div><input id="montant" type="number" placeholder="Montant ex: 500" oninput="calc()"><button class="btn" onclick="save()">🔒 Épargner</button><div id="hist" style="margin-top:20px"></div></div><script>let totalB=parseInt(localStorage.getItem('b')||0),totalL=parseInt(localStorage.getItem('l')||0),hist=JSON.parse(localStorage.getItem('h')||'[]');update();function calc(){let m=parseInt(montant.value)||0;b.innerText=Math.round(m*0.9)+' F';l.innerText=Math.round(m*0.1)+' F'}function save(){let m=parseInt(montant.value)||0;if(!m)return alert('Mets montant');let addB=Math.round(m*0.9),addL=Math.round(m*0.1);totalB+=addB;totalL+=addL;hist.unshift({m,date:new Date().toLocaleDateString()});localStorage.setItem('b',totalB);localStorage.setItem('l',totalL);localStorage.setItem('h',JSON.stringify(hist));montant.value='';update();alert('Bravo '+addB+'F bloqués')}function update(){document.getElementById('b').innerText=totalB+' F';document.getElementById('l').innerText=totalL+' F';document.getElementById('hist').innerHTML=hist.map(h=>`<div style="border-bottom:1px solid #eee;padding:8px 0">💰 ${h.m}F - ${h.date}</div>`).join('')}</script></body></html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KAFOLO - Tiny Savings</title>
+<style>
+*{box-sizing:border-box;font-family:sans-serif}body{margin:0;background:#fef9f0;color:#222;padding:16px}
+h1{margin:0;font-size:28px}.card{background:white;border-radius:20px;padding:18px;box-shadow:0 4px 15px rgba(0,0,0,.07);margin:12px 0}
+.balance{font-size:36px;font-weight:900;color:#ff6b35}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{border:none;border-radius:16px;padding:16px;font-weight:700;font-size:15px;cursor:pointer}
+.btn-orange{background:#ff6b35;color:white}.btn-light{background:#fff3e8;color:#ff6b35}
+.btn-dark{background:#222;color:white;width:100%;margin-top:10px;padding:18px;font-size:18px}
+.tirelire{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #eee}
+.tag{padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700}
+.mix{background:#e3f2ff;color:#1976d2}.baya{background:#fce4ec;color:#c2185b}.dep{background:#e8f5e9;color:#2e7d32}
+input{width:100%;padding:14px;border-radius:12px;border:2px solid #ffe0cc;font-size:16px;margin:8px 0}
+</style>
+</head>
+<body>
+<h1>🐖 KAFOLO</h1><p style="color:#888;margin-top:2px">Tiny Savings • Lomé</p>
+
+<div class="card">
+<div style="color:#888;font-size:13px">TOTAL ÉPARGNÉ</div>
+<div class="balance" id="total">0 F</div>
+<div style="color:#888;font-size:13px" id="count">0 dépôts</div>
+</div>
+
+<div class="grid">
+<button class="btn btn-orange" onclick="depot()">+ Dépôt</button>
+<button class="btn btn-light" onclick="retrait()">- Retrait</button>
+</div>
+
+<div class="card">
+<h3 style="margin:0 0 10px 0">🐷 Ma Tirelire</h3>
+<div id="liste"></div>
+<div class="grid" style="margin-top:14px">
+<button class="btn btn-light" onclick="addTirelire('Mix')">+ Mix</button>
+<button class="btn btn-light" onclick="addTirelire('Baya')">+ Baya</button>
+</div>
+</div>
+
+<div class="card">
+<h3 style="margin:0 0 10px 0">📜 Historique</h3>
+<div id="hist" style="font-size:14px;color:#666">Pas encore de dépôt</div>
+</div>
+
+<script>
+let data = JSON.parse(localStorage.getItem('kafolo')||'{"total":0,"items":[],"hist":[]}');
+function save(){localStorage.setItem('kafolo',JSON.stringify(data));render()}
+function render(){
+ document.getElementById('total').textContent=data.total.toLocaleString()+' F';
+ document.getElementById('count').textContent=data.hist.length+' dépôts';
+ let h='';
+ data.items.forEach((it,i)=>{
+  h+=`<div class="tirelire"><div><b>${it.nom}</b><br><small style="color:#888">${it.montant} F</small></div><span class="tag ${it.nom.toLowerCase()}">${it.nom}</span></div>`;
+ });
+ if(!data.items.length) h='<div style="color:#aaa">Clique + Mix ou + Baya pour créer</div>';
+ document.getElementById('liste').innerHTML=h;
+ let hh='';
+ data.hist.slice().reverse().forEach(x=>{hh+=`<div style="padding:6px 0;border-bottom:1px solid #f5f5f5">• ${x}</div>`});
+ if(hh) document.getElementById('hist').innerHTML=hh;
+}
+function depot(){
+ let m=prompt('Montant du dépôt en F ? (ex: 500)');
+ if(!m) return;
+ m=parseInt(m); if(isNaN(m)) return;
+ let nom=prompt('Pour quelle tirelire ? Tape Mix ou Baya','Mix')||'Mix';
+ data.total+=m;
+ let found=data.items.find(i=>i.nom.toLowerCase()==nom.toLowerCase());
+ if(found) found.montant+=m; else data.items.push({nom:nom,montant:m});
+ data.hist.push('+'+m+' F dans '+nom+' - '+new Date().toLocaleDateString());
+ save();
+}
+function retrait(){
+ let m=prompt('Montant à retirer ?'); if(!m) return; m=parseInt(m);
+ if(m>data.total){alert('Pas assez !');return;}
+ data.total-=m; data.hist.push('-'+m+' F retrait'); save();
+}
+function addTirelire(nom){
+ let m=prompt('Montant de départ pour '+nom+' ?','0')||'0';
+ data.items.push({nom:nom,montant:parseInt(m)||0}); save();
+}
+render();
+</script>
+</body>
+</html>
