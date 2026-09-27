@@ -1,65 +1,17 @@
-Crée une application web complète, mobile-first, professionnelle et inspirant 100% confiance, nommée **KAFOLO - Mon Épargne Bloquée**.
-
-**1. VISION ET POSITIONNEMENT :**
-KAFOLO n'est PAS un site d'investissement. C'est une TIRELIRE NUMÉRIQUE ANTI-GASPILLAGE pour le Togo. Slogan : "Ton argent est en sécurité. On te le rend petit à petit pour que tu ne le gaspilles pas."
-Objectif : Aider les jeunes, zem, vendeuses, étudiants à Lomé à garder leur argent. L'utilisateur dépose son PROPRE argent (ex: 5000F) et on le lui reverse par tranche quotidienne (ex: 1000F/jour). Aucune promesse de gain. Juste de la discipline.
-
-**2. IDENTITÉ VISUELLE ET CONFIANCE (TRÈS IMPORTANT) :**
-- Couleurs : Vert principal #00B67A (comme Wave), Blanc #FFFFFF, Gris clair #F5F5F5, Noir #121212
-- Logo : Tirelire cochon avec cadenas qui s'ouvre légèrement.
-- Police : Inter ou Poppins, très lisible.
-- Design : Comme Wave / Flooz. Gros boutons arrondis, beaucoup d'espace blanc, ultra simple.
-- Éléments de confiance OBLIGATOIRES sur la page d'accueil :
-    - Badge "100% Sécurisé - Paiements Mixx by Yas & Flooz"
-    - Badge "Aucun frais caché"
-    - Section "Comment ça marche ? en 3 étapes" avec icônes
-    - Section "Pourquoi KAFOLO n'est PAS une arnaque" : Explique clairement : On ne multiplie pas ton argent. On garde TON argent et on te le rend. C'est TA tirelire.
-    - Témoignages fictifs mais réalistes (3 témoignages avec photo togolaise, ex: "Koffi, Zem à Adidogomé")
-    - FAQ : 6 questions (Et si je veux tout retirer ? Est-ce que mon argent est perdu ? Quels sont les frais ? etc.)
-    - Footer avec Contacts : WhatsApp, Email, Mentions Légales, CGU.
-
-**3. TEXTE COMPLET DE LA PAGE D'ACCUEIL (à mettre tel quel) :**
-- HERO : Titre "Arrête de tout dépenser le même jour." Sous-titre "Dépose 5.000F aujourd'hui. KAFOLO te rend 1.000F chaque jour. Deviens enfin maître de ton argent." Bouton CTA vert "Créer ma Tirelire Gratuitement"
-- Section 3 étapes : 1. Tu déposes via Mixx/Flooz 2. Ton argent est bloqué en sécurité 3. Tu reçois un peu chaque jour à 6h du matin.
-- Section Problème/Solution : Problème : Tu touches de l'argent et le soir il ne reste rien. Solution : KAFOLO est le cadenas de ta tirelire.
-- Section Sécurité : Ton argent ne part nulle part. Frais transparents : 100F sur 5000F. Pénalité 10% seulement si tu casses ta tirelire avant la fin.
-
-**4. FONCTIONNALITÉS TECHNIQUES OBLIGATOIRES :**
-
-A. Auth : Inscription par Numéro de téléphone Togolais (+228) + Nom + Mot de passe. OTP par SMS (simuler pour l'instant).
-
-B. Dashboard Utilisateur :
-- Carte 1 : Solde Bloqué Total (ex: 4000 F restants)
-- Carte 2 : Solde Disponible Aujourd'hui (ex: 1000 F) + Gros bouton "RETIRER MES 1000F SUR MIXX/FLOOZ MAINTENANT"
-- Barre de progression : Jour 2 sur 5
-- Calendrier visuel des 5 prochains déblocages (avec dates)
-- Historique complet : Dépôts / Retraits quotidiens / Statut
-- Bouton rouge "Casser ma tirelire (Pénalité 10%)" avec pop-up de confirmation qui explique la pénalité.
-
-C. Page Dépôt :
-- Choix Montant : 5.000F, 10.000F, 15.000F, 25.000F, 50.000F, Autre montant
-- Choix Rythme de déblocage : 500F/jour, 1000F/jour, 2000F/jour
-- Calcul automatique : "Si tu déposes 5000F à 1000F/jour, tu seras débloqué en 5 jours"
-- Paiement : Intégration **PayGate Global API** pour Mixx by Yas (ex T-Money) et Flooz. Utiliser CinetPay comme fallback. La page doit demander le numéro Mixx/Flooz pour payer.
-
-D. Logique Backend - CRON JOB (Essentiel) :
-- Créer une fonction Supabase Cron qui tourne tous les jours à 06:00 GMT.
-- Elle prend chaque épargne active, déplace X montant (selon le rythme choisi) de `solde_bloque` vers `solde_disponible`.
-- Envoie une notification (simuler un envoi WhatsApp : "Bonjour Koffi, tes 1000F du jour sont disponibles sur KAFOLO !").
-
-E. Page Admin / Super Admin :
-- Voir tous les utilisateurs, tous les dépôts, tous les retraits en attente.
-- Bouton pour valider les retraits vers Mixx/Flooz.
-- Statistiques : Total bloqué sur la plateforme, Total retiré, Nombre d'utilisateurs.
-- Génération automatique d'un **PDF Présentation Investisseur** avec les stats du jour.
-
-F. Page Légale :
-- CGU, Mentions Légales, Politique de confidentialité. Texte simple qui dit que KAFOLO est un service de garde d'épargne, pas une banque, pas un investissement à rendement.
-
-**5. STACK TECHNIQUE :**
-Next.js 14, Tailwind CSS, Supabase (Auth + Database + Cron), PayGate Global SDK. Code propre, commenté, prêt à déployer sur Vercel.
-
-**6. PDF INVESTISSEUR (Créer une page /investisseurs qui génère le PDF) :**
-Le PDF doit contenir : Page de garde KAFOLO, Problème au Togo, Solution KAFOLO, Comment ça marche, Business Model (Frais 2% + Pénalité 10% + Premium 500F/mois), Marché cible (2M de jeunes avec Mobile Money), Pourquoi c'est différent des arnaques (pas de promesse de gain), Roadmap, Contact.
-
-Le résultat final doit être une application qui donne 100% CONFIANCE dès la première seconde. Design premium, pas amateur.
+KAFOLO
+│
+├── index.html
+│
+├── css/
+│   └── style.css
+│
+├── js/
+│   └── app.js
+│
+├── api/
+│   └── paygate/
+│       ├── create-payment.js
+│       ├── callback.js
+│       └── withdraw.js
+│
+└── database
