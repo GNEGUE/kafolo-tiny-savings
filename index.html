@@ -2,19 +2,112 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAFOLO — Tirelire numérique</title>
+<title>KAFOLO</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
-body{background:#f4f7f5;color:#17251d}
+body{background:#f4f7f5}
 .app{max-width:480px;margin:auto;min-height:100vh;background:#fff;padding-bottom:80px}
 header{background:#087443;color:#fff;padding:25px 20px;border-radius:0 0 25px 25px}
-.logo{font-size:28px;font-weight:900;letter-spacing:2px}
-.subtitle{margin-top:6px;opacity:.9;font-size:14px}
+.logo{font-size:28px;font-weight:900}
 .balance-card{margin:20px;padding:25px;border-radius:20px;background:linear-gradient(135deg,#087443,#0da45e);color:#fff}
 .balance{font-size:34px;font-weight:bold;margin:10px 0}
-.buttons{display:flex;gap:10px;padding:0 20px}
 button{border:none;cursor:pointer;border-radius:14px;padding:14px;font-weight:bold;font-size:15px}
 .primary{background:#087443;color:#fff;flex:1}.secondary{background:#e8f3ed;color:#087443;flex:1}
-section{padding:25px 20px 0}.section-title{font-size:19px;margin-bottom:15px}
-.goal-card{background:#f5f8f6;padding:18px;border-radius:18px;margin-bottom:10px}
-.progress{width:100%;height:12px;background:#dce7e1
+.buttons{display:flex;gap:10px;padding:0 20px}
+.progress{width:100%;height:12px;background:#dce7e1;border-radius:20px;overflow:hidden}
+.progress-bar{height:100%;background:#087443}
+.operation{display:flex;justify-content:space-between;align-items:center;padding:15px 0;border-bottom:1px solid #edf0ee}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;justify-content:center;align-items:flex-end}
+.modal-content{width:100%;max-width:480px;background:#fff;padding:25px;border-radius:25px 25px 0 0}
+input{width:100%;padding:15px;border:1px solid #d8e0db;border-radius:12px;margin-top:8px}
+.payment-method{display:flex;gap:10px;margin-top:10px}.payment-method button{flex:1;border:1px solid #d8e0db;background:#fff}.payment-method button.active{border:2px solid #087443;background:#e8f3ed}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:65px;background:#fff;border-top:1px solid #e7ebe8;display:flex;justify-content:space-around;align-items:center}
+.nav-item{text-align:center;font-size:11px;color:#829088;cursor:pointer}.nav-item.active{color:#087443;font-weight:bold}
+.tab-content{display:none;padding:20px}.tab-content.active{display:block}
+#auth-screen{max-width:480px;margin:auto;min-height:100vh;background:#fff;padding:40px 20px}
+</style>
+</head>
+<body>
+<div id="auth-screen">
+<div style="margin-top:40px"><div class="logo" style="color:#087443">KAFOLO</div><p>Ma tirelire numérique</p><h2 id="auth-title" style="margin-top:20px">Connexion</h2>
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="password" placeholder="Mot de passe">
+<button class="primary" style="width:100%;margin-top:15px" onclick="handleAuth()" id="authBtn">Se connecter</button>
+<p style="text-align:center;margin-top:15px"><span id="auth-switch-text">Pas de compte ?</span> <a href="#" onclick="toggleAuth()" style="color:#087443;font-weight:bold" id="auth-switch-link">S'inscrire</a></p>
+<p id="auth-msg" style="margin-top:15px;font-size:13px;color:red"></p>
+</div></div>
+
+<div class="app" id="main-app" style="display:none">
+<header><div class="logo">KAFOLO</div><div id="userEmail" style="font-size:13px;opacity:.9"></div></header>
+<div id="tab-accueil" class="tab-content active">
+<div class="balance-card"><div>Épargne disponible</div><div class="balance"><span id="balance">0</span> F</div></div>
+<div class="buttons"><button class="primary" onclick="openDeposit()">+ Déposer</button><button class="secondary" onclick="openWithdraw()">Retirer</button></div>
+<div style="padding:20px"><h3>Objectif</h3><div style="margin-top:10px" class="progress"><div class="progress-bar" id="progressBar" style="width:0%"></div></div><div style="display:flex;justify-content:space-between;font-size:13px;margin-top:8px"><span id="currentGoal">0 F</span><span>200 000 F</span></div><h3 style="margin-top:25px">Opérations</h3><div id="historyList"></div></div>
+</div>
+<div id="tab-profil" class="tab-content"><h3>Profil</h3><p id="profileEmail" style="margin:15px 0"></p><button class="secondary" style="width:100%" onclick="logout()">Se déconnecter</button></div>
+<div class="modal" id="depositModal"><div class="modal-content"><h3>Dépôt</h3><input type="number" id="depositAmount" placeholder="10000"><div class="payment-method"><button id="floozBtn" onclick="selectPayment('Flooz')">Flooz</button><button id="mixxBtn" onclick="selectPayment('Mixx')">Mixx</button></div><div style="display:flex;gap:10px;margin-top:20px"><button style="flex:1;background:#eee" onclick="closeModals()">Annuler</button><button class="primary" onclick="makeDeposit()">Continuer</button></div></div></div>
+<div class="modal" id="withdrawModal"><div class="modal-content"><h3>Retrait</h3><input type="number" id="withdrawAmount" placeholder="5000"><input type="tel" id="withdrawPhone" placeholder="+228..."><div style="display:flex;gap:10px;margin-top:20px"><button style="flex:1;background:#eee" onclick="closeModals()">Annuler</button><button class="primary" onclick="makeWithdraw()">Demander</button></div></div></div>
+<nav class="bottom-nav"><div class="nav-item active" onclick="switchTab('accueil',this)">Accueil</div><div class="nav-item" onclick="switchTab('profil',this)">Profil</div></nav>
+</div>
+
+<script>
+const supabaseUrl = 'https://ypvvjjuziccjcdgcbkow.supabase.co';
+const supabaseKey = 'sb_publishable_gD-rM2ccmOveEysQFNvE7g_BpcR0Unl';
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+let selectedPayment=""; let currentUser=null; let isLogin=true;
+
+function toggleAuth(){isLogin=!isLogin;document.getElementById('auth-title').textContent=isLogin?'Connexion':'Inscription';document.getElementById('authBtn').textContent=isLogin?'Se connecter':"S'inscrire";document.getElementById('auth-switch-text').textContent=isLogin?'Pas de compte ?':'Déjà un compte ?';document.getElementById('auth-switch-link').textContent=isLogin?'S\'inscrire':'Se connecter';}
+async function handleAuth(){
+ const email=document.getElementById('email').value; const password=document.getElementById('password').value; const msg=document.getElementById('auth-msg');
+ if(!email||!password){msg.textContent='Remplis tout';return;}
+ document.getElementById('authBtn').textContent='Chargement...';
+ let result; if(isLogin){result=await supabaseClient.auth.signInWithPassword({email,password})}else{result=await supabaseClient.auth.signUp({email,password})}
+ document.getElementById('authBtn').textContent=isLogin?'Se connecter':"S'inscrire";
+ if(result.error){msg.textContent=result.error.message}else{if(!isLogin){msg.style.color='green';msg.textContent='Compte créé ! Connecte-toi';isLogin=true;toggleAuth();}else{checkUser()}}
+}
+async function checkUser(){
+ const {data:{user}} = await supabaseClient.auth.getUser();
+ if(user){currentUser=user;document.getElementById('auth-screen').style.display='none';document.getElementById('main-app').style.display='block';document.getElementById('userEmail').textContent=user.email;document.getElementById('profileEmail').textContent=user.email;loadData();}
+ else{document.getElementById('auth-screen').style.display='block';document.getElementById('main-app').style.display='none';}
+}
+async function loadData(){
+ const {data:profile}=await supabaseClient.from('profiles').select('balance').eq('id',currentUser.id).single();
+ const balance=profile?.balance||0;
+ document.getElementById('balance').textContent=balance.toLocaleString('fr-FR');
+ let pct=Math.min(Math.round((balance/200000)*100),100);
+ document.getElementById('progressBar').style.width=pct+'%'; document.getElementById('currentGoal').textContent=balance.toLocaleString('fr-FR')+' F';
+ const {data:txs}=await supabaseClient.from('transactions').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(20);
+ let html=''; if(!txs||txs.length===0){html='<div style="padding:10px;color:#888">Aucune opération</div>'} else {txs.forEach(op=>{
+  html+=`<div class="operation"><div><b>${op.type==='deposit'?'Dépôt ':'Retrait '}${op.method||''}</b><br><small>${new Date(op.created_at).toLocaleString('fr-FR')}</small></div><b>${op.type==='deposit'?'+':'-'}${op.amount} F</b></div>`;
+ });}
+ document.getElementById('historyList').innerHTML=html;
+}
+function switchTab(name,el){document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));document.getElementById('tab-'+name).classList.add('active');el.classList.add('active');}
+function openDeposit(){document.getElementById("depositModal").style.display="flex";}
+function openWithdraw(){document.getElementById("withdrawModal").style.display="flex";}
+function closeModals(){document.getElementById("depositModal").style.display="none";document.getElementById("withdrawModal").style.display="none";}
+function selectPayment(m){selectedPayment=m;document.getElementById("floozBtn").classList.remove("active");document.getElementById("mixxBtn").classList.remove("active");if(m==="Flooz")document.getElementById("floozBtn").classList.add("active");if(m==="Mixx")document.getElementById("mixxBtn").classList.add("active");}
+async function makeDeposit(){
+ const amount=Number(document.getElementById("depositAmount").value);
+ if(!amount||!selectedPayment){alert("Montant + méthode");return;}
+ const {data:prof}=await supabaseClient.from('profiles').select('balance').eq('id',currentUser.id).single();
+ const newBal=(prof?.balance||0)+amount;
+ await supabaseClient.from('profiles').update({balance:newBal}).eq('id',currentUser.id);
+ await supabaseClient.from('transactions').insert({user_id:currentUser.id,type:'deposit',amount:amount,method:selectedPayment});
+ closeModals();loadData();alert("Dépôt "+amount+" F OK");
+}
+async function makeWithdraw(){
+ const amount=Number(document.getElementById("withdrawAmount").value);const phone=document.getElementById("withdrawPhone").value;
+ if(!amount||!phone){alert("Remplis tout");return;}
+ const {data:prof}=await supabaseClient.from('profiles').select('balance').eq('id',currentUser.id).single();
+ if((prof?.balance||0)<amount){alert("Solde insuffisant");return;}
+ await supabaseClient.from('profiles').update({balance:prof.balance-amount}).eq('id',currentUser.id);
+ await supabaseClient.from('transactions').insert({user_id:currentUser.id,type:'withdraw',amount:amount,phone:phone});
+ closeModals();loadData();alert("Retrait demandé");
+}
+async function logout(){await supabaseClient.auth.signOut();location.reload();}
+checkUser();
+</script>
+</body>
+</html>
