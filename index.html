@@ -4,113 +4,132 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KAFOLO — Tirelire numérique</title>
 <style>
-/* ... ton même CSS ... */
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-body { background: #f4f7f5; color: #17251d; }
-.app { max-width: 480px; margin: auto; min-height: 100vh; background: #ffffff; padding-bottom: 80px; }
-header { background: #087443; color: white; padding: 25px 20px; border-radius: 0 0 25px 25px; }
-.logo { font-size: 28px; font-weight: 900; letter-spacing: 2px; }
-.subtitle { margin-top: 6px; opacity: .9; font-size: 14px; }
-.balance-card { margin: 20px; padding: 25px; border-radius: 20px; background: linear-gradient(135deg, #087443, #0da45e); color: white; box-shadow: 0 8px 25px rgba(0,0,0,.12); }
-.balance-title { font-size: 13px; opacity: .85; } .balance { font-size: 34px; font-weight: bold; margin: 10px 0; } .balance-info { font-size: 13px; opacity: .9; }
-.buttons { display: flex; gap: 10px; padding: 0 20px; }
-button { border: none; cursor: pointer; border-radius: 14px; padding: 14px; font-weight: bold; font-size: 15px; }
-.primary { background: #087443; color: white; flex: 1; } .secondary { background: #e8f3ed; color: #087443; flex: 1; }
-section { padding: 25px 20px 0; } .section-title { font-size: 19px; margin-bottom: 15px; }
-.goal-card { background: #f5f8f6; padding: 18px; border-radius: 18px; }
-.goal-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
-.progress { width: 100%; height: 12px; background: #dce7e1; border-radius: 20px; overflow: hidden; }
-.progress-bar { width: 62%; height: 100%; background: #087443; border-radius: 20px; transition: width 0.5s; }
-.goal-details { display: flex; justify-content: space-between; margin-top: 10px; font-size: 13px; color: #637168; }
-.operation { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #edf0ee; }
-.operation-left { display: flex; align-items: center; gap: 12px; }
-.icon { width: 40px; height: 40px; background: #e8f3ed; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 19px; }
-.operation-name { font-weight: bold; font-size: 14px; } .operation-date { font-size: 12px; color: #8a968f; margin-top: 3px; } .amount { font-weight: bold; color: #087443; }
-.modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 100; justify-content: center; align-items: flex-end; }
-.modal-content { width: 100%; max-width: 480px; background: white; padding: 25px; border-radius: 25px 25px 0 0; }
-.modal-content h2 { margin-bottom: 20px; }
-label { display: block; font-size: 13px; font-weight: bold; margin: 12px 0 7px; }
-input, select { width: 100%; padding: 15px; border: 1px solid #d8e0db; border-radius: 12px; outline: none; font-size: 15px; }
-.payment-method { display: flex; gap: 10px; margin-top: 10px; } .payment-method button { flex: 1; border: 1px solid #d8e0db; background: white; } .payment-method button.active { border: 2px solid #087443; background: #e8f3ed; }
-.modal-actions { display: flex; gap: 10px; margin-top: 20px; } .close { background: #eee; flex: 1; }
-.bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; height: 65px; background: white; border-top: 1px solid #e7ebe8; display: flex; justify-content: space-around; align-items: center; z-index: 50; }
-.nav-item { text-align: center; font-size: 11px; color: #829088; cursor: pointer; padding: 10px; } .nav-item.active { color: #087443; font-weight: bold; } .nav-icon { font-size: 21px; display: block; margin-bottom: 3px; }
-.info { margin: 20px; padding: 15px; background: #fff8e5; border-radius: 15px; font-size: 12px; line-height: 1.5; color: #69551c; }
-.tab-content { display: none; } .tab-content.active { display: block; }
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{background:#f4f7f5;color:#17251d}
+.app{max-width:480px;margin:auto;min-height:100vh;background:#fff;padding-bottom:80px}
+header{background:#087443;color:#fff;padding:25px 20px;border-radius:0 0 25px 25px}
+.logo{font-size:28px;font-weight:900;letter-spacing:2px}
+.subtitle{margin-top:6px;opacity:.9;font-size:14px}
+.balance-card{margin:20px;padding:25px;border-radius:20px;background:linear-gradient(135deg,#087443,#0da45e);color:#fff}
+.balance{font-size:34px;font-weight:bold;margin:10px 0}
+.balance-title{font-size:13px;opacity:.85}.balance-info{font-size:13px;opacity:.9}
+.buttons{display:flex;gap:10px;padding:0 20px}
+button{border:none;cursor:pointer;border-radius:14px;padding:14px;font-weight:bold;font-size:15px}
+.primary{background:#087443;color:#fff;flex:1}.secondary{background:#e8f3ed;color:#087443;flex:1}
+section{padding:25px 20px 0}.section-title{font-size:19px;margin-bottom:15px}
+.goal-card{background:#f5f8f6;padding:18px;border-radius:18px;margin-bottom:10px}
+.progress{width:100%;height:12px;background:#dce7e1;border-radius:20px;overflow:hidden}
+.progress-bar{height:100%;background:#087443;border-radius:20px;transition:width 0.5s}
+.operation{display:flex;justify-content:space-between;align-items:center;padding:15px 0;border-bottom:1px solid #edf0ee}
+.icon{width:40px;height:40px;background:#e8f3ed;border-radius:50%;display:flex;justify-content:center;align-items:center}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;justify-content:center;align-items:flex-end}
+.modal-content{width:100%;max-width:480px;background:#fff;padding:25px;border-radius:25px 25px 0 0}
+label{display:block;font-size:13px;font-weight:bold;margin:12px 0 7px}
+input{width:100%;padding:15px;border:1px solid #d8e0db;border-radius:12px;outline:none;font-size:15px}
+.payment-method{display:flex;gap:10px;margin-top:10px}.payment-method button{flex:1;border:1px solid #d8e0db;background:#fff}.payment-method button.active{border:2px solid #087443;background:#e8f3ed}
+.modal-actions{display:flex;gap:10px;margin-top:20px}.close{background:#eee;flex:1}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:65px;background:#fff;border-top:1px solid #e7ebe8;display:flex;justify-content:space-around;align-items:center;z-index:50}
+.nav-item{text-align:center;font-size:11px;color:#829088;cursor:pointer;padding:10px}.nav-item.active{color:#087443;font-weight:bold}.nav-icon{font-size:21px;display:block;margin-bottom:3px}
+.tab-content{display:none}.tab-content.active{display:block}
+#auth-screen{max-width:480px;margin:auto;min-height:100vh;background:#fff;padding:40px 20px}
+.auth-card{margin-top:50px}.auth-card h1{font-size:28px;color:#087443}
+.auth-card input{margin-top:10px}
+.info{margin:20px;padding:15px;background:#fff8e5;border-radius:15px;font-size:12px;line-height:1.5;color:#69551c}
 </style>
 </head>
 <body>
-<div class="app">
-<header><div class="logo">KAFOLO</div><div class="subtitle">Ma tirelire numérique • Mon épargne • Mon rythme</div></header>
-
-<div id="tab-accueil" class="tab-content active">
-<div class="balance-card"><div class="balance-title">Épargne disponible</div><div class="balance"><span id="balance">125 000</span> F CFA</div><div class="balance-info">Épargne personnelle — aucun rendement</div></div>
-<div class="buttons"><button class="primary" onclick="openDeposit()">+ Déposer</button><button class="secondary" onclick="openWithdraw()">Retirer</button></div>
-<section><h2 class="section-title">Mon objectif</h2><div class="goal-card"><div class="goal-header"><strong>Objectif d'épargne</strong><strong id="percent">62%</strong></div><div class="progress"><div class="progress-bar" id="progressBar"></div></div><div class="goal-details"><span id="currentGoal">125 000 F</span><span>200 000 F</span></div></div></section>
-<section><h2 class="section-title">Déblocage progressif</h2><div class="goal-card"><div class="goal-header"><span>Montant déblocable aujourd'hui</span><strong>5 000 F</strong></div><div class="goal-details"><span>Prochain déblocage</span><span>Demain</span></div></div></section>
-<section><h2 class="section-title">Dernières opérations</h2><div id="historyList"></div></section>
+<div id="auth-screen" style="display:none">
+<div class="auth-card"><div class="logo" style="color:#087443">KAFOLO</div><p style="margin:10px 0 20px">Ma tirelire numérique</p><h2 id="auth-title">Connexion</h2><input type="email" id="email" placeholder="Email"><input type="password" id="password" placeholder="Mot de passe"><button class="primary" style="width:100%;margin-top:15px" onclick="handleAuth()" id="authBtn">Se connecter</button><p style="text-align:center;margin-top:15px;font-size:14px"><span id="auth-switch-text">Pas de compte ?</span> <a href="#" onclick="toggleAuth()" id="auth-switch-link" style="color:#087443;font-weight:bold">S'inscrire</a></p><p id="auth-msg" style="margin-top:15px;color:red;font-size:13px"></p></div>
 </div>
-
-<div id="tab-objectif" class="tab-content"><section><h2 class="section-title">Mon Objectif</h2><div class="goal-card">Tu veux atteindre 200 000 F. Tu es à <span id="objPercent">62%</span>. Continue comme ça bro !</div></section></div>
+<div class="app" id="main-app" style="display:none">
+<header><div class="logo">KAFOLO</div><div class="subtitle" id="userEmail">Ma tirelire numérique</div></header>
+<div id="tab-accueil" class="tab-content active"><div class="balance-card"><div class="balance-title">Épargne disponible</div><div class="balance"><span id="balance">0</span> F CFA</div><div class="balance-info">Épargne personnelle — aucun rendement</div></div><div class="buttons"><button class="primary" onclick="openDeposit()">+ Déposer</button><button class="secondary" onclick="openWithdraw()">Retirer</button></div><section><h2 class="section-title">Mon objectif</h2><div class="goal-card"><div style="display:flex;justify-content:space-between;margin-bottom:12px"><strong>Objectif d'épargne</strong><strong id="percent">0%</strong></div><div class="progress"><div class="progress-bar" id="progressBar" style="width:0%"></div></div><div style="display:flex;justify-content:space-between;margin-top:10px;font-size:13px;color:#637168"><span id="currentGoal">0 F</span><span>200 000 F</span></div></div></section><section><h2 class="section-title">Dernières opérations</h2><div id="historyList"></div></section></div>
+<div id="tab-objectif" class="tab-content"><section><h2 class="section-title">Mon Objectif</h2><div class="goal-card">Objectif : 200 000 F<br>Tu es à <span id="objPercent">0%</span>. Force à toi bro !</div></section></div>
 <div id="tab-operations" class="tab-content"><section><h2 class="section-title">Toutes mes opérations</h2><div id="fullHistory"></div></section></div>
-<div id="tab-profil" class="tab-content"><section><h2 class="section-title">Mon Profil</h2><div class="info"><strong>À propos de KAFOLO</strong><br><br>KAFOLO est un service de garde et de discipline d'épargne personnelle. Aucun investissement, aucun rendement.<br><br><strong>Frais de service : 2%</strong><br><br><strong>Numéro : +228 XX XX XX XX</strong></div></section></div>
-
-<div class="modal" id="depositModal"><div class="modal-content"><h2>Faire un dépôt</h2><label>Montant</label><input type="number" id="depositAmount" placeholder="Ex : 10000"><label>Mode de paiement</label><div class="payment-method"><button id="floozBtn" onclick="selectPayment('Flooz')">Flooz</button><button id="mixxBtn" onclick="selectPayment('Mixx')">Mixx by Yas</button></div><div class="modal-actions"><button class="close" onclick="closeModals()">Annuler</button><button class="primary" onclick="makeDeposit()">Continuer</button></div></div></div>
-<div class="modal" id="withdrawModal"><div class="modal-content"><h2>Déblocage</h2><p style="font-size:14px;color:#68756d;">Montant disponible aujourd'hui :</p><h2 style="color:#087443;margin-top:10px;">5 000 F CFA</h2><label>Montant à retirer</label><input type="number" id="withdrawAmount" placeholder="Ex : 5000"><label>Numéro Mobile Money</label><input type="tel" id="withdrawPhone" placeholder="+228 XX XX XX XX"><div class="modal-actions"><button class="close" onclick="closeModals()">Annuler</button><button class="primary" onclick="makeWithdraw()">Demander le retrait</button></div></div></div>
-
-<nav class="bottom-nav">
-<div class="nav-item active" onclick="switchTab('accueil')"><span class="nav-icon">⌂</span>Accueil</div>
-<div class="nav-item" onclick="switchTab('objectif')"><span class="nav-icon">🎯</span>Objectif</div>
-<div class="nav-item" onclick="switchTab('operations')"><span class="nav-icon">↔</span>Opérations</div>
-<div class="nav-item" onclick="switchTab('profil')"><span class="nav-icon">👤</span>Profil</div>
-</nav>
+<div id="tab-profil" class="tab-content"><section><h2 class="section-title">Mon Profil</h2><div class="info"><strong id="profileEmail"></strong><br><br>KAFOLO - garde et discipline d'épargne.<br>Frais : 2%<br><br><button class="secondary" style="width:100%" onclick="logout()">Se déconnecter</button></div></section></div>
+<div class="modal" id="depositModal"><div class="modal-content"><h2>Faire un dépôt</h2><label>Montant</label><input type="number" id="depositAmount" placeholder="Ex : 10000"><label>Mode</label><div class="payment-method"><button id="floozBtn" onclick="selectPayment('Flooz')">Flooz</button><button id="mixxBtn" onclick="selectPayment('Mixx')">Mixx by Yas</button></div><div class="modal-actions"><button class="close" onclick="closeModals()">Annuler</button><button class="primary" onclick="makeDeposit()">Continuer</button></div></div></div>
+<div class="modal" id="withdrawModal"><div class="modal-content"><h2>Déblocage</h2><p style="font-size:14px;color:#68756d">Disponible aujourd'hui : 5 000 F</p><label>Montant</label><input type="number" id="withdrawAmount" placeholder="5000"><label>Numéro MoMo</label><input type="tel" id="withdrawPhone" placeholder="+228 XX XX XX XX"><div class="modal-actions"><button class="close" onclick="closeModals()">Annuler</button><button class="primary" onclick="makeWithdraw()">Demander</button></div></div></div>
+<nav class="bottom-nav"><div class="nav-item active" onclick="switchTab('accueil')"><span class="nav-icon">⌂</span>Accueil</div><div class="nav-item" onclick="switchTab('objectif')"><span class="nav-icon">🎯</span>Objectif</div><div class="nav-item" onclick="switchTab('operations')"><span class="nav-icon">↔</span>Opérations</div><div class="nav-item" onclick="switchTab('profil')"><span class="nav-icon">👤</span>Profil</div></nav>
 </div>
-<script>
-let selectedPayment=""; let balance = parseInt(localStorage.getItem('kafolo_balance') || '125000');
-let history = JSON.parse(localStorage.getItem('kafolo_history') || '[]');
-if(history.length===0){ history=[
-{name:"Dépôt Flooz",date:"Aujourd'hui • 09:42",amount:"+20 000 F",type:"in"},
-{name:"Dépôt Mixx by Yas",date:"Hier • 17:20",amount:"+50 000 F",type:"in"},
-{name:"Déblocage",date:"25 septembre • 10:00",amount:"-5 000 F",type:"out"}
-];}
-function updateUI(){
-document.getElementById('balance').textContent=balance.toLocaleString('fr-FR');
-let pct=Math.min(Math.round((balance/200000)*100),100);
-document.getElementById('percent').textContent=pct+'%'; document.getElementById('objPercent').textContent=pct+'%';
-document.getElementById('progressBar').style.width=pct+'%'; document.getElementById('currentGoal').textContent=balance.toLocaleString('fr-FR')+' F';
-let html=''; history.slice().reverse().forEach(op=>{
-html+=`<div class="operation"><div class="operation-left"><div class="icon">${op.type==='in'?'↓':'↑'}</div><div><div class="operation-name">${op.name}</div><div class="operation-date">${op.date}</div></div></div><div class="amount">${op.amount}</div></div>`;
-}); document.getElementById('historyList').innerHTML=html; document.getElementById('fullHistory').innerHTML=html;
-localStorage.setItem('kafolo_balance',balance); localStorage.setItem('kafolo_history',JSON.stringify(history));
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
+const supabaseUrl = 'https://ypvvjjuziccjcdgcbkow.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlwdnZqanV6aWNjamNkZ2Nia293Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA0MjIxNjgsImV4cCI6MjEwNTk5ODE2OH0.-b3ByO8B7CCwZDthI0uzGmnqLUovQthJmkn73aPEic0';
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+let selectedPayment=""; let currentUser=null; let isLogin=true;
+
+window.toggleAuth = () => {
+ isLogin=!isLogin;
+ document.getElementById('auth-title').textContent=isLogin?'Connexion':'Inscription';
+ document.getElementById('authBtn').textContent=isLogin?'Se connecter':"S'inscrire";
+ document.getElementById('auth-switch-text').textContent=isLogin?'Pas de compte ?':'Déjà un compte ?';
+ document.getElementById('auth-switch-link').textContent=isLogin?'S\'inscrire':'Se connecter';
 }
-function switchTab(name){
-document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-document.getElementById('tab-'+name).classList.add('active');
-event.currentTarget.classList.add('active');
+
+window.handleAuth = async () => {
+ const email=document.getElementById('email').value; const password=document.getElementById('password').value;
+ const msg=document.getElementById('auth-msg'); msg.textContent='';
+ if(!email||!password){msg.textContent='Remplis tout bro';return;}
+ document.getElementById('authBtn').textContent='Chargement...';
+ let result; if(isLogin){result=await supabase.auth.signInWithPassword({email,password})}else{result=await supabase.auth.signUp({email,password})}
+ document.getElementById('authBtn').textContent=isLogin?'Se connecter':"S'inscrire";
+ if(result.error){msg.textContent=result.error.message}else{if(!isLogin){msg.style.color='green';msg.textContent='Compte créé ! Vérifie ton email puis connecte-toi.'}else{checkUser()}}
 }
-function openDeposit(){document.getElementById("depositModal").style.display="flex";}
-function openWithdraw(){document.getElementById("withdrawModal").style.display="flex";}
-function closeModals(){document.getElementById("depositModal").style.display="none";document.getElementById("withdrawModal").style.display="none";}
-function selectPayment(method){selectedPayment=method; document.getElementById("floozBtn").classList.remove("active"); document.getElementById("mixxBtn").classList.remove("active"); if(method==="Flooz")document.getElementById("floozBtn").classList.add("active"); if(method==="Mixx")document.getElementById("mixxBtn").classList.add("active");}
-function makeDeposit(){
-const amount=Number(document.getElementById("depositAmount").value);
-if(!amount||amount<=0){alert("Veuillez saisir un montant valide.");return;}
-if(!selectedPayment){alert("Veuillez choisir Flooz ou Mixx by Yas.");return;}
-balance+=amount; history.push({name:"Dépôt "+selectedPayment,date:"Aujourd'hui • "+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),amount:"+"+amount.toLocaleString('fr-FR')+" F",type:"in"});
-updateUI(); closeModals(); alert("Dépôt de "+amount+" F par "+selectedPayment+" réussi ! (mode test en attendant PayGate)");
+
+async function checkUser(){
+ const {data:{user}}=await supabase.auth.getUser();
+ if(user){currentUser=user; document.getElementById('auth-screen').style.display='none'; document.getElementById('main-app').style.display='block'; document.getElementById('userEmail').textContent=user.email; document.getElementById('profileEmail').textContent=user.email; loadData();}
+ else{document.getElementById('auth-screen').style.display='block'; document.getElementById('main-app').style.display='none';}
 }
-function makeWithdraw(){
-const amount=Number(document.getElementById("withdrawAmount").value);
-const phone=document.getElementById("withdrawPhone").value;
-if(!amount||amount<=0){alert("Veuillez saisir un montant valide.");return;}
-if(amount>5000){alert("Tu ne peux retirer que 5000 F max aujourd'hui (déblocage progressif).");return;}
-if(amount>balance){alert("Solde insuffisant.");return;}
-if(!phone){alert("Veuillez saisir votre numéro Mobile Money.");return;}
-balance-=amount; history.push({name:"Déblocage vers "+phone,date:"Aujourd'hui • "+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),amount:"-"+amount.toLocaleString('fr-FR')+" F",type:"out"});
-updateUI(); closeModals(); alert("Retrait de "+amount+" F demandé vers "+phone+" ! (mode test)");
+
+async function loadData(){
+ const {data:profile}=await supabase.from('profiles').select('balance').eq('id',currentUser.id).single();
+ const balance=profile?.balance||0;
+ document.getElementById('balance').textContent=balance.toLocaleString('fr-FR');
+ let pct=Math.min(Math.round((balance/200000)*100),100);
+ document.getElementById('percent').textContent=pct+'%'; document.getElementById('objPercent').textContent=pct+'%';
+ document.getElementById('progressBar').style.width=pct+'%'; document.getElementById('currentGoal').textContent=balance.toLocaleString('fr-FR')+' F';
+ const {data:txs}=await supabase.from('transactions').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(20);
+ let html=''; if(!txs||txs.length===0){html='<div style="padding:15px;color:#888;font-size:14px">Aucune opération. Fais ton premier dépôt !</div>'} else {txs.forEach(op=>{
+  let sign=op.type==='deposit'?'+':'-'; let name=op.type==='deposit'?'Dépôt '+op.method:'Déblocage vers '+op.phone;
+  html+=`<div class="operation"><div style="display:flex;align-items:center;gap:12px"><div class="icon">${op.type==='deposit'?'↓':'↑'}</div><div><div style="font-weight:bold;font-size:14px">${name}</div><div style="font-size:12px;color:#8a968f">${new Date(op.created_at).toLocaleString('fr-FR')}</div></div></div><div style="font-weight:bold;color:#087443">${sign}${op.amount.toLocaleString('fr-FR')} F</div></div>`;
+ });}
+ document.getElementById('historyList').innerHTML=html; document.getElementById('fullHistory').innerHTML=html;
 }
-updateUI();
+
+window.switchTab=(name)=>{
+ document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+ document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+ document.getElementById('tab-'+name).classList.add('active');
+ event.currentTarget.classList.add('active');
+}
+window.openDeposit=()=>document.getElementById("depositModal").style.display="flex";
+window.openWithdraw=()=>document.getElementById("withdrawModal").style.display="flex";
+window.closeModals=()=>{document.getElementById("depositModal").style.display="none";document.getElementById("withdrawModal").style.display="none";}
+window.selectPayment=(m)=>{selectedPayment=m; document.getElementById("floozBtn").classList.remove("active"); document.getElementById("mixxBtn").classList.remove("active"); if(m==="Flooz")document.getElementById("floozBtn").classList.add("active"); if(m==="Mixx")document.getElementById("mixxBtn").classList.add("active");}
+window.makeDeposit=async()=>{
+ const amount=Number(document.getElementById("depositAmount").value);
+ if(!amount||amount<=0||!selectedPayment){alert("Montant + méthode");return;}
+ const {data:prof}=await supabase.from('profiles').select('balance').eq('id',currentUser.id).single();
+ const newBal=(prof?.balance||0)+amount;
+ await supabase.from('profiles').update({balance:newBal}).eq('id',currentUser.id);
+ await supabase.from('transactions').insert({user_id:currentUser.id,type:'deposit',amount:amount,method:selectedPayment});
+ closeModals(); document.getElementById("depositAmount").value=""; loadData(); alert("Dépôt "+amount+" F réussi !");
+}
+window.makeWithdraw=async()=>{
+ const amount=Number(document.getElementById("withdrawAmount").value); const phone=document.getElementById("withdrawPhone").value;
+ if(!amount||amount<=0||!phone){alert("Remplis tout");return;}
+ if(amount>5000){alert("Max 5000 F / jour bro");return;}
+ const {data:prof}=await supabase.from('profiles').select('balance').eq('id',currentUser.id).single();
+ if((prof?.balance||0)<amount){alert("Solde insuffisant");return;}
+ const newBal=(prof.balance-amount);
+ await supabase.from('profiles').update({balance:newBal}).eq('id',currentUser.id);
+ await supabase.from('transactions').insert({user_id:currentUser.id,type:'withdraw',amount:amount,phone:phone});
+ closeModals(); document.getElementById("withdrawAmount").value=""; loadData(); alert("Retrait demandé vers "+phone);
+}
+window.logout=async()=>{await supabase.auth.signOut(); location.reload();}
+checkUser();
 </script>
 </body>
 </html>
